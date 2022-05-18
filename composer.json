@@ -1,0 +1,30 @@
+{
+  "name": "objement/dialfire-api-php",
+  "description": "An small library to simply access the DialFire API using PHP.",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Kevin Glier",
+      "email": "github@objement.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.3",
+    "ext-curl": "*",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  },
+  "autoload": {
+    "psr-4": {
+      "Objement\\DialFireApi\\": "source/",
+      "Objement\\DialFireApiTests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit tests/"
+  }
+}
