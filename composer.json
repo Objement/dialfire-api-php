@@ -1,6 +1,6 @@
 {
   "name": "objement/dialfire-api-php",
-  "description": "An small library to simply access the DialFire API using PHP.",
+  "description": "A small library to simply access the DialFire API using PHP.",
   "minimum-stability": "stable",
   "license": "MIT",
   "type": "library",
