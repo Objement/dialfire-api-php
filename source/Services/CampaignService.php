@@ -108,13 +108,13 @@ class CampaignService implements ServiceInterface
     /**
      * Bulk import or bulk update contact records
      * POST /api/campaigns/{campaign_id}/contacts/import
-     * @param array $contactsData An flat array of assoziative arrays, each containing the data of a contact. When the $id is given, the contact will be updated else created.
+     * @param array $contactsCsv A CSV string with lines, each containing the data of a contact. When the $id is given, the contact will be updated else created.
      * @return object
      * @throws Exception
      */
-    function importContacts(array $contactsData): object
+    function importContacts(string $contactsCsv): object
     {
-        return $this->httpJsonRequester->post('contacts/import', $contactsData);
+        return $this->httpJsonRequester->post('contacts/import', $contactsCsv, HttpJsonRequester::PAYLOAD_TYPE_CSV);
     }
 
     /**

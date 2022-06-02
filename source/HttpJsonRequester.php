@@ -6,6 +6,9 @@ use Exception;
 
 class HttpJsonRequester
 {
+    const PAYLOAD_TYPE_JSON = 'json';
+    const PAYLOAD_TYPE_CSV = 'csv';
+
     /**
      * @var string
      */
@@ -51,7 +54,7 @@ class HttpJsonRequester
      */
     private function processCurlRequest($ch): object {
         $result = curl_exec($ch);
-
+        
         curl_close($ch);
 
         if (curl_errno($ch))  {
@@ -67,12 +70,15 @@ class HttpJsonRequester
      * @return object
      * @throws Exception
      */
-    public function post($url, $payload): object
+    public function post($url, $payload, $payloadType = self::PAYLOAD_TYPE_JSON): object
     {
         $ch = $this->getCurlHandleForUrl($url);
 
+        if ($payloadType == self::PAYLOAD_TYPE_JSON) {
+            $payload = json_encode($payload);
+        }
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         return $this->processCurlRequest($ch);
@@ -84,12 +90,16 @@ class HttpJsonRequester
      * @return object
      * @throws Exception
      */
-    public function put($url, $payload): object
+    public function put($url, $payload, $payloadType = self::PAYLOAD_TYPE_JSON): object
     {
         $ch = $this->getCurlHandleForUrl($url);
 
+        if ($payloadType == self::PAYLOAD_TYPE_JSON) {
+            $payload = json_encode($payload);
+        }
+
         curl_setopt($ch, CURLOPT_PUT, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         return $this->processCurlRequest($ch);
