@@ -4,6 +4,7 @@ namespace Objement\DialFireApi\Services;
 
 use Exception;
 use Objement\DialFireApi\HttpJsonRequester;
+use Objement\DialFireApi\Parameters\CampaignImportContactParameters;
 use Objement\DialFireApi\ServiceInterface;
 use const Objement\DialFireApi\API_BASE_URL;
 
@@ -112,9 +113,14 @@ class CampaignService implements ServiceInterface
      * @return object
      * @throws Exception
      */
-    function importContacts(string $contactsCsv): object
+    function importContacts(string $contactsCsv, ?CampaignImportContactParameters $parameters=null): object
     {
-        return $this->httpJsonRequester->post('contacts/import', $contactsCsv, HttpJsonRequester::PAYLOAD_TYPE_CSV);
+        $queryString = '';
+        if ($parameters) {
+            $queryString = '?'.http_build_query($parameters->getAsArray());
+        }
+
+        return $this->httpJsonRequester->post('contacts/import'.$queryString, $contactsCsv, HttpJsonRequester::PAYLOAD_TYPE_CSV);
     }
 
     /**
@@ -156,13 +162,15 @@ class CampaignService implements ServiceInterface
 
     /**
      * Import Do-Not-Call list
-     * @param $doNotCallList $exportId An flat array of assoziative arrays, each containing the data of a contact. When the $id is given, the contact will be updated else created.
+     * @param array $phoneNumbers A flat array of phone numbers which should be imported into the do-not-call-list.
      * @return object
      * @throws Exception
      */
-    function importDoNotCallList(array $doNotCallList): object
+    function importDoNotCallList(array $phoneNumbers): object
     {
-        return $this->httpJsonRequester->post('imports/donotcall', $doNotCallList);
+        $phoneNumbersCsv = implode("\n", $phoneNumbers);
+
+        return $this->httpJsonRequester->post('imports/donotcall', $phoneNumbersCsv, HttpJsonRequester::PAYLOAD_TYPE_CSV);
     }
 
     /**

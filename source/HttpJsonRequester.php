@@ -36,13 +36,13 @@ class HttpJsonRequester
      * @param $url
      * @return resource
      */
-    private function getCurlHandleForUrl($url)
+    private function getCurlHandle($url, $httpHeaders)
     {
         $url = $this->buildUrl($url);
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer '.$this->bearerToken));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge($httpHeaders, ['Authorization: Bearer '.$this->bearerToken]));
         curl_setopt($ch, CURLINFO_HEADER_OUT, true); // enable tracking
 
         return $ch;
@@ -54,12 +54,13 @@ class HttpJsonRequester
      */
     private function processCurlRequest($ch): object {
         $result = curl_exec($ch);
-        
-        curl_close($ch);
 
         if (curl_errno($ch))  {
             throw new Exception('An error occurred. '.curl_error($ch));
         }
+
+
+        curl_close($ch);
 
         return json_decode($result, false);
     }
@@ -72,11 +73,12 @@ class HttpJsonRequester
      */
     public function post($url, $payload, $payloadType = self::PAYLOAD_TYPE_JSON): object
     {
-        $ch = $this->getCurlHandleForUrl($url);
+        $ch = $this->getCurlHandle($url, ['Content-Type: text/data; charset=utf-8']);
 
         if ($payloadType == self::PAYLOAD_TYPE_JSON) {
             $payload = json_encode($payload);
         }
+
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -92,7 +94,7 @@ class HttpJsonRequester
      */
     public function put($url, $payload, $payloadType = self::PAYLOAD_TYPE_JSON): object
     {
-        $ch = $this->getCurlHandleForUrl($url);
+        $ch = $this->getCurlHandle($url);
 
         if ($payloadType == self::PAYLOAD_TYPE_JSON) {
             $payload = json_encode($payload);
@@ -112,7 +114,7 @@ class HttpJsonRequester
      */
     public function get(string $url): object
     {
-        $ch = $this->getCurlHandleForUrl($url);
+        $ch = $this->getCurlHandle($url);
 
         return $this->processCurlRequest($ch);
     }
@@ -124,7 +126,7 @@ class HttpJsonRequester
      */
     public function delete(string $url): object
     {
-        $ch = $this->getCurlHandleForUrl($url);
+        $ch = $this->getCurlHandle($url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
 
         return $this->processCurlRequest($ch);
