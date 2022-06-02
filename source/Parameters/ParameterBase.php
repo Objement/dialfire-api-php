@@ -17,7 +17,6 @@ abstract class ParameterBase
             $parametersArray[$property->getName()] = $property->getValue($this);
         }
 
-        var_dump($parametersArray);
         return $parametersArray;
     }
 }
